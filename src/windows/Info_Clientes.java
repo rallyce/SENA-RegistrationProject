@@ -1,0 +1,552 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+ */
+package windows;
+
+import java.awt.Image;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.WindowConstants;
+import classes.get_connection;
+import com.itextpdf.text.BadElementException;
+import java.awt.Color;
+import java.awt.HeadlessException;
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTable;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import com.itextpdf.text.Chunk;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.FontFactory;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Font;
+import java.awt.Toolkit;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import javax.swing.JFrame;
+
+public class Info_Clientes extends javax.swing.JFrame {
+
+    public static int ID_E;
+    public static int ID;
+    DefaultTableModel model_3 = new DefaultTableModel() {
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+
+            return false;
+        }
+
+    };
+
+    public Info_Clientes() {
+        initComponents();
+        setLocationRelativeTo(null);
+        setResizable(false);
+        setTitle("Informacion del Cliente " + Gestion_de_Clientes.client + " - Sesion de " + Login.user);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+        jLabel2.setText("Informacion del Cliente: " + Gestion_de_Clientes.client);
+
+        ImageIcon imag_1 = new ImageIcon("src/images/wallpaper2.png");
+
+        Icon ic_1 = new ImageIcon(imag_1.getImage().getScaledInstance(jLabel_wallpaper4.getWidth(),
+                jLabel_wallpaper4.getHeight(), Image.SCALE_DEFAULT));
+
+        jLabel_wallpaper4.setIcon(ic_1);
+
+        try {
+
+            Connection cn_2 = get_connection.connect();
+            PreparedStatement pst_2 = cn_2.prepareStatement("select * from clientes where nombre_cliente = '" + Gestion_de_Clientes.client + "'");
+
+            ResultSet rs_2 = pst_2.executeQuery();
+
+            if (rs_2.next()) {
+
+                ID = rs_2.getInt("id_cliente");
+                String last_resource = rs_2.getString("last_resource");
+
+                jTextField_nameinfo.setText(rs_2.getString("nombre_cliente"));
+                jTextField_mailinfo.setText(rs_2.getString("email_cliente"));
+                jTextField_phoneinfo.setText(rs_2.getString("tel_cliente"));
+                jTextField_addressinfo.setText(rs_2.getString("dir_cliente"));
+                jTextField_modyInfo.setText(rs_2.getString("ultima_modificacion"));
+
+            }
+
+        } catch (SQLException e) {
+            System.out.println("SQL ERROR! " + e);
+
+        }
+
+        try {
+
+            Connection cn_1 = get_connection.connect();
+            PreparedStatement pst = cn_1.prepareStatement("select id_equipo, tipo_equipo, marca, estatus from equipos where id_cliente = '" + ID + "'");
+
+            jTable_equipos = new JTable(model_3);
+            jScrollPane1.setViewportView(jTable_equipos);
+
+            model_3.addColumn("ID Equipo");
+            model_3.addColumn("Tipo Equipo");
+            model_3.addColumn("Marca");
+            model_3.addColumn("Estatus");
+
+            ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                Object[] rw = new Object[4];
+
+                for (int i = 0; i < 4; i++) {
+
+                    rw[i] = rs.getObject(i + 1);
+
+                }
+                model_3.addRow(rw);
+
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("SQL ERROR! " + e);
+        }
+
+        jTable_equipos.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent ev) {
+
+                int fila_tabla = jTable_equipos.rowAtPoint(ev.getPoint());
+                int columna_tabla = 0;
+
+                if (fila_tabla > -1) {
+
+                    ID_E = (int) model_3.getValueAt(fila_tabla, columna_tabla);
+
+                    Informacion_equipos info_equipos = new Informacion_equipos();
+                    info_equipos.setVisible(true);
+                }
+
+            }
+
+        });
+
+        this.repaint();
+
+    }
+
+    @Override
+    public Image getIconImage() {
+
+        Image retValue = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemResource("images/Logo_icon2.png"));
+
+        return retValue;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jLabel8 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jTextField_modyInfo = new javax.swing.JTextField();
+        jTextField_addressinfo = new javax.swing.JTextField();
+        jTextField_phoneinfo = new javax.swing.JTextField();
+        jTextField_mailinfo = new javax.swing.JTextField();
+        jTextField_nameinfo = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable_equipos = new javax.swing.JTable();
+        jButton_PdfReport = new javax.swing.JButton();
+        jButton_UpdateClient = new javax.swing.JButton();
+        jButton_RegistrarProducto = new javax.swing.JButton();
+        jLabel_wallpaper4 = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setIconImage(getIconImage());
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Generar Lista de Equipos");
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 395, -1, -1));
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Creado por Miguel S.A ©");
+        getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 440, -1, -1));
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel6.setText("Ultima Modificacion:");
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 310, -1, -1));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel5.setText("Direccion:");
+        getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 230, -1, -1));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel4.setText("Telefono:");
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 170, -1, -1));
+
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("email:");
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 110, -1, -1));
+
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setText("Nombre:");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 50, -1, -1));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, -1, -1));
+
+        jTextField_modyInfo.setBackground(new java.awt.Color(204, 204, 204));
+        jTextField_modyInfo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        getContentPane().add(jTextField_modyInfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 335, 230, -1));
+
+        jTextField_addressinfo.setBackground(new java.awt.Color(255, 204, 153));
+        jTextField_addressinfo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        getContentPane().add(jTextField_addressinfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 255, 230, -1));
+
+        jTextField_phoneinfo.setBackground(new java.awt.Color(255, 204, 153));
+        jTextField_phoneinfo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        getContentPane().add(jTextField_phoneinfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 195, 230, -1));
+
+        jTextField_mailinfo.setBackground(new java.awt.Color(255, 204, 153));
+        jTextField_mailinfo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        getContentPane().add(jTextField_mailinfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 135, 230, -1));
+
+        jTextField_nameinfo.setBackground(new java.awt.Color(255, 204, 153));
+        jTextField_nameinfo.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        getContentPane().add(jTextField_nameinfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 75, 230, -1));
+
+        jTable_equipos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable_equipos);
+
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 350, 220));
+
+        jButton_PdfReport.setBackground(new java.awt.Color(204, 204, 204));
+        jButton_PdfReport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Imprimir.png"))); // NOI18N
+        jButton_PdfReport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_PdfReportActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton_PdfReport, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 290, 120, 100));
+
+        jButton_UpdateClient.setBackground(new java.awt.Color(102, 255, 102));
+        jButton_UpdateClient.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jButton_UpdateClient.setText("Actualizar Cliente");
+        jButton_UpdateClient.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_UpdateClientActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton_UpdateClient, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 350, 190, -1));
+
+        jButton_RegistrarProducto.setBackground(new java.awt.Color(102, 255, 255));
+        jButton_RegistrarProducto.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        jButton_RegistrarProducto.setText("Registrar Producto");
+        jButton_RegistrarProducto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton_RegistrarProductoActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton_RegistrarProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 300, 190, 40));
+        getContentPane().add(jLabel_wallpaper4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 660, 480));
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton_RegistrarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_RegistrarProductoActionPerformed
+
+        run_once1(regi_pro);
+
+    }//GEN-LAST:event_jButton_RegistrarProductoActionPerformed
+
+    private void jButton_UpdateClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_UpdateClientActionPerformed
+
+        String name, email, phone, address, last_mod;
+        int validacion = 0;
+
+        name = jTextField_nameinfo.getText().trim();
+        phone = jTextField_phoneinfo.getText().trim();
+        email = jTextField_mailinfo.getText().trim();
+        address = jTextField_addressinfo.getText().trim();
+        last_mod = jTextField_modyInfo.getText().trim();
+
+        if (name.equals("")) {
+
+            jTextField_nameinfo.setBackground(Color.PINK);
+            validacion++;
+
+        }
+
+        if (email.equals("")) {
+
+            jTextField_mailinfo.setBackground(Color.PINK);
+            validacion++;
+
+        }
+
+        if (phone.equals("")) {
+
+            jTextField_phoneinfo.setBackground(Color.PINK);
+            validacion++;
+
+        }
+
+        if (address.equals("")) {
+
+            jTextField_addressinfo.setBackground(Color.PINK);
+            validacion++;
+
+        }
+
+        if (last_mod.equals("")) {
+
+            jTextField_modyInfo.setBackground(Color.PINK);
+            validacion++;
+
+        }
+
+        try {
+
+            Connection cn_3 = get_connection.connect();
+            PreparedStatement pst_3 = cn_3.prepareStatement("update clientes set nombre_cliente = ?, email_cliente = ?, tel_cliente = ?, dir_cliente = ?, ultima_modificacion = ? where nombre_cliente = '" + Gestion_de_Clientes.client + "'");
+
+            if (validacion != 0) {
+
+                JOptionPane.showMessageDialog(null, "Llene todos los campos requeridos", "Advertencia", JOptionPane.WARNING_MESSAGE);
+
+            } else {
+
+                pst_3.setString(1, name);
+                pst_3.setString(2, email);
+                pst_3.setString(3, phone);
+                pst_3.setString(4, address);
+                pst_3.setString(5, last_mod);
+
+                pst_3.executeUpdate();
+                cn_3.close();
+
+                jTextField_nameinfo.setBackground(new Color(51, 255, 51));
+                jTextField_mailinfo.setBackground(new Color(51, 255, 51));
+                jTextField_phoneinfo.setBackground(new Color(51, 255, 51));
+                jTextField_addressinfo.setBackground(new Color(51, 255, 51));
+                jTextField_modyInfo.setBackground(new Color(51, 255, 51));
+
+                JOptionPane.showMessageDialog(null, "Actualización de datos del cliente exitosa.");
+
+                this.dispose();
+            }
+
+        } catch (HeadlessException | SQLException e) {
+            System.out.println("SQL ERROR! " + e);
+        }
+    }//GEN-LAST:event_jButton_UpdateClientActionPerformed
+
+    private void jButton_PdfReportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_PdfReportActionPerformed
+
+        Document dt_1 = new Document();
+
+        try {
+
+            String route_1 = System.getProperty("user.home");
+            PdfWriter.getInstance(dt_1, new FileOutputStream(route_1 + "/Desktop/" + jTextField_nameinfo.getText().trim() + ".pdf"));
+
+            com.itextpdf.text.Image header_1 = com.itextpdf.text.Image.getInstance("src/images/Sena_mainte.png");
+            header_1.scaleToFit(650, 1000);
+            header_1.setAlignment(Chunk.ALIGN_CENTER);
+
+            Paragraph parr_1 = new Paragraph();
+            parr_1.setAlignment(Paragraph.ALIGN_CENTER);
+            parr_1.setFont(FontFactory.getFont("Tahoma", 16, Font.BOLD, BaseColor.DARK_GRAY));
+            parr_1.add("\n\n Información del cliente \n\n");
+
+            dt_1.open();
+            dt_1.add(header_1);
+            dt_1.add(parr_1);
+
+            PdfPTable table_1 = new PdfPTable(5);
+            table_1.addCell("ID");
+            table_1.addCell("Nombre");
+            table_1.addCell("email");
+            table_1.addCell("Telefono");
+            table_1.addCell("Dirección");
+
+            try {
+
+                Connection cn_4 = get_connection.connect();
+                PreparedStatement pst_4 = cn_4.prepareStatement("select id_cliente, nombre_cliente, email_cliente, tel_cliente, dir_cliente from clientes where nombre_cliente = '" + Gestion_de_Clientes.client + "'");
+
+                ResultSet rs_4 = pst_4.executeQuery();
+
+                if (rs_4.next()) {
+
+                    table_1.addCell(rs_4.getString(1));
+                    table_1.addCell(rs_4.getString(2));
+                    table_1.addCell(rs_4.getString(3));
+                    table_1.addCell(rs_4.getString(4));
+                    table_1.addCell(rs_4.getString(5));
+
+                }
+                dt_1.add(table_1);
+
+            } catch (SQLException e) {
+                System.out.println("SQL ERROR!" + e);
+
+            }
+
+            Paragraph parr_2 = new Paragraph();
+            parr_2.setAlignment(Paragraph.ALIGN_CENTER);
+            parr_2.setFont(FontFactory.getFont("Tahoma", 16, Font.BOLD, BaseColor.DARK_GRAY));
+            parr_2.add("\n\n Equipos registrados \n\n");
+
+            PdfPTable table_2 = new PdfPTable(4);
+            table_2.addCell("ID Equipo");
+            table_2.addCell("Tipo de computador");
+            table_2.addCell("Marca");
+            table_2.addCell("Estatus");
+
+            dt_1.add(parr_2);
+
+            try {
+
+                Connection cn_5 = get_connection.connect();
+                PreparedStatement pst_5 = cn_5.prepareStatement("select id_equipo, tipo_equipo, marca, estatus from equipos where id_cliente = '" + Info_Clientes.ID + "'");
+
+                ResultSet rs_5 = pst_5.executeQuery();
+
+                while (rs_5.next()) {
+
+                    table_2.addCell(rs_5.getString(1));
+                    table_2.addCell(rs_5.getString(2));
+                    table_2.addCell(rs_5.getString(3));
+                    table_2.addCell(rs_5.getString(4));
+
+                }
+                dt_1.add(table_2);
+
+            } catch (SQLException e) {
+            }
+
+            dt_1.close();
+            JOptionPane.showMessageDialog(null, "Reporte de cliente y equipos creado.");
+
+        } catch (DocumentException | FileNotFoundException e) {
+        } catch (IOException ex) {
+
+            System.out.println("Image ERROR! " + ex);
+
+        }
+
+
+    }//GEN-LAST:event_jButton_PdfReportActionPerformed
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(Info_Clientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(Info_Clientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(Info_Clientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(Info_Clientes.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new Info_Clientes().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton_PdfReport;
+    private javax.swing.JButton jButton_RegistrarProducto;
+    private javax.swing.JButton jButton_UpdateClient;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel_wallpaper4;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable_equipos;
+    private javax.swing.JTextField jTextField_addressinfo;
+    private javax.swing.JTextField jTextField_mailinfo;
+    private javax.swing.JTextField jTextField_modyInfo;
+    private javax.swing.JTextField jTextField_nameinfo;
+    private javax.swing.JTextField jTextField_phoneinfo;
+    // End of variables declaration//GEN-END:variables
+
+    Registro_de_Producto regi_pro = new Registro_de_Producto();
+    
+    public void run_once1(JFrame reference_1) {
+
+        regi_pro.setVisible(false);
+        regi_pro = (Registro_de_Producto) reference_1;
+        regi_pro.setVisible(true);
+
+    }
+
+}
